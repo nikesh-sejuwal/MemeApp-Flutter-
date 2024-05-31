@@ -53,18 +53,19 @@ class _CaptionEditState extends State<CaptionEdit> {
                   IconButton(
                     onPressed: () {
                       var index = widget.myIndex;
-                      if (memeProvider.memes[index]['uploadedBy']['id'] ==
+                      if (memeProvider.memes[index].uploadedBy.id ==
                           Provider.of<Authprovider>(listen: false, context)
-                              .user['id']) {
-                        memeProvider.updateCaption(
-                            memeProvider.memes[index]['_id'],
+                              .user!
+                              .id) {
+                        memeProvider.updateCaption(memeProvider.memes[index].id,
                             captionController.text);
                         // print("HELLOO");
                         Navigator.of(context).pop();
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                             content: Text(
-                                "Unauthorized meme's caption cannot be edited")));
+                                "Unauthorized meme's caption cannot be edited"),
+                            backgroundColor: Colors.red));
                         Navigator.of(context).pop();
                       }
                     },

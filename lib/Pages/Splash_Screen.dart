@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:memeapp/Components/Screens/SignUp_Page.dart';
+import 'package:memeapp/Components/Screens/Log%20in/SignUp_Page.dart';
 import 'package:memeapp/Pages/Home_Page.dart';
 import 'package:memeapp/Providers/AuthProvider.dart';
 import 'package:provider/provider.dart';
@@ -62,7 +62,9 @@ class _Splash_ScreenState extends State<Splash_Screen> {
           .pushReplacement(CupertinoPageRoute(builder: (c) => SignUp_Page()));
     } else {
       Navigator.of(context)
-          .pushReplacement(CupertinoPageRoute(builder: (c) => Home_Page()));
+          .pushReplacement(CupertinoPageRoute(builder: (c) => Home_Page(
+            
+          )));
     }
     // var prefs = await SharedPreferences.getInstance();
     // var token = await prefs.getString('headers') ?? '';

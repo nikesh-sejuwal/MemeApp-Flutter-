@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:memeapp/Components/Dialogs/Dialog_Box.dart';
 import 'package:memeapp/Components/Dialogs/posts.dart';
@@ -29,11 +30,11 @@ class _UserProfileState extends State<UserProfile> {
   void initState() {
     Provider.of<Authprovider>(context, listen: false).getUserFromSavedToken();
     var aProv = Provider.of<Authprovider>(context, listen: false);
-    name = aProv.user['name'];
-    email = aProv.user['email'];
-    phone = aProv.user['phone'];
-    id = aProv.user['id'];
-    imageURL = aProv.user['imageURL'];
+    name = aProv.user!.name;
+    email = aProv.user!.email;
+    phone = aProv.user!.phone;
+    id = aProv.user!.id;
+    imageURL = aProv.user!.imageURL;
 
     super.initState();
   }
@@ -117,9 +118,14 @@ class _UserProfileState extends State<UserProfile> {
                                     borderRadius: BorderRadius.circular(100),
                                   ),
                                   child: ClipOval(
-                                    child: Image.network(
-                                      aProv.user['imageURL'] ?? personImg,
+                                    child: CachedNetworkImage(
+                                      imageUrl:
+                                          aProv.user!.imageURL ?? personImg,
                                       fit: BoxFit.cover,
+                                      placeholder: (context, url) =>
+                                          CircularProgressIndicator(),
+                                      errorWidget: (context, url, error) =>
+                                          Icon(Icons.error),
                                     ),
                                   ),
                                 ),
@@ -135,7 +141,7 @@ class _UserProfileState extends State<UserProfile> {
                                         padding:
                                             const EdgeInsets.only(left: 8.0),
                                         child: Text(
-                                          aProv.user['name'],
+                                          aProv.user!.name,
                                           style: TextStyle(
                                               fontSize: 18,
                                               fontWeight: FontWeight.bold),
@@ -153,7 +159,7 @@ class _UserProfileState extends State<UserProfile> {
                                           ),
                                           Expanded(
                                             child: Text(
-                                              aProv.user['email'],
+                                              aProv.user!.email,
                                               style: TextStyle(
                                                   fontWeight: FontWeight.w500),
                                               overflow: TextOverflow.ellipsis,
@@ -169,7 +175,7 @@ class _UserProfileState extends State<UserProfile> {
                                               icon: Icon(Icons.phone_android)),
                                           Expanded(
                                             child: Text(
-                                              aProv.user['phone'],
+                                              aProv.user!.phone,
                                               style: TextStyle(
                                                   fontWeight: FontWeight.w500),
                                               overflow: TextOverflow.ellipsis,

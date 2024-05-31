@@ -1,16 +1,17 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 // import 'package:intl/intl.dart';
 // import 'package:memeapp/Components/Dialogs/caption_Edit_box.dart';
-import 'package:memeapp/Components/Screens/Inside_homepage01.dart';
-import 'package:memeapp/Components/Screens/Inside_homepage02.dart';
-import 'package:memeapp/Components/Screens/Inside_homepage03.dart';
+import 'package:memeapp/Components/Screens/home/Inside_homepage01.dart';
+import 'package:memeapp/Components/Screens/home/Inside_homepage02.dart';
+import 'package:memeapp/Components/Screens/home/Inside_homepage03.dart';
 // import 'package:memeapp/Pages/Profile_Page.dart';
 import 'package:memeapp/Pages/User_Profile.dart';
 import 'package:memeapp/Providers/AuthProvider.dart';
 import 'package:memeapp/Providers/MemeProvider.dart';
 import 'package:memeapp/Resources/Resources.dart';
 import 'package:provider/provider.dart';
-import '../Components/Screens/Upload_New_Meme.dart';
+import '../Components/Dialogs/Upload_New_Meme.dart';
 
 class Home_Page extends StatefulWidget {
   const Home_Page({super.key});
@@ -29,7 +30,7 @@ class _Home_PageState extends State<Home_Page> {
   @override
   Widget build(BuildContext context) {
     final String? imageURL =
-        Provider.of<Authprovider>(context, listen: false).user['imageURL'];
+        Provider.of<Authprovider>(context, listen: false).user!.imageURL;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.yellow.shade700,
@@ -53,7 +54,7 @@ class _Home_PageState extends State<Home_Page> {
         ),
         actions: [
           Consumer<Authprovider>(builder: (context, aprov, child) {
-            var imageURL = aprov.user['imageURL'];
+            // var imageURL = aprov.user.imageURL;
             return InkWell(
               onTap: () {
                 Navigator.of(context)
@@ -70,8 +71,12 @@ class _Home_PageState extends State<Home_Page> {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: ClipOval(
-                    child: Image.network(imageURL ?? personImg,
-                        fit: BoxFit.cover)),
+                    child: CachedNetworkImage(
+                  imageUrl: aprov.user!.imageURL ?? personImg,
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) => CircularProgressIndicator(),
+                  errorWidget: (context, url, error) => Icon(Icons.error),
+                )),
               ),
             );
           })
@@ -88,9 +93,6 @@ class _Home_PageState extends State<Home_Page> {
             child: ListView.builder(
               itemCount: memeProvider.memes.length,
               itemBuilder: (context, index) {
-                // var meme = memeProvider.memes[index]['filePath'];
-                // var cap = memeProvider.memes[index]['caption'] ?? "";
-
                 return Column(
                   children: [
                     InsideHomepage01(

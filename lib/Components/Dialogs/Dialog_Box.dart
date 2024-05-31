@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:memeapp/Components/Screens/SignIn_Page.dart';
+import 'package:memeapp/Components/Screens/Log%20in/SignIn_Page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Dialog_Box extends StatelessWidget {

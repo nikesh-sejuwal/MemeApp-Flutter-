@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 // import 'package:memeapp/Components/Dialogs/caption_Edit.dart';
 import 'package:memeapp/Resources/Resources.dart';
+import 'package:memeapp/modalclass/meme_model.dart';
+// import 'package:memeapp/modalclass/user_model.dart';
 // import 'package:shared_preferences/shared_preferences.dart';
 
 class MemeProvider with ChangeNotifier {
@@ -19,9 +21,7 @@ class MemeProvider with ChangeNotifier {
     print("New header set to $header.");
   }
 
-  List<Map<String, dynamic>> memes = [];
-  List<Map<String, dynamic>> personMemes = [];
-  List<Map<String, dynamic>> likesMeme = [];
+  List<Meme> memes = [];
 
   void getMemes() async {
     try {
@@ -33,11 +33,13 @@ class MemeProvider with ChangeNotifier {
           headers: {'Authorization': 'Bearer $header'});
       // print("HEADER AFTER: $header");
       // print('MY RESPONSE BODY IS: ${response.body}');
-      print('Status code: ${response.statusCode}');
+      print('Status code: ${response.statusCode} is is is');
       if (response.statusCode == 200) {
-        List<dynamic> decodedInfo = (jsonDecode(response.body));
-        memes = decodedInfo.map((e) => e as Map<String, dynamic>).toList();
-        // print("THE MEMES ARE $memes");
+        var decodedInfo = (jsonDecode(response.body) as List<dynamic>);
+        memes = decodedInfo
+            .map((e) => Meme.parseFromJSON(e as Map<String, dynamic>))
+            .toList();
+        print("THE MEMES ARE $memes");
         notifyListeners();
       }
     } catch (e) {
@@ -54,14 +56,16 @@ class MemeProvider with ChangeNotifier {
       print(header);
       print(response.statusCode);
       if (response.statusCode == 200) {
-        // var mydecode =
+        var mydecode = jsonDecode(response.body);
         for (int i = 0; i < memes.length; i++) {
-          if (memes[i]['_id'] == memeId) {
+          if (memes[i].id == memeId) {
             print('Match found');
-            memes[i]['likes'] = jsonDecode(response.body)['likes'];
+            memes[i].likes = (mydecode['likes'] as List<dynamic>)
+                .map((e) => e as String)
+                .toList();
             // print("MY RESPONSE IS   ${mydecode}");
             // getMemes();
-            print("THE MATCHS ARE: ${memes[i]['likes']}");
+            // print("THE MATCHS ARE: ${memes[i].likes}");
             notifyListeners();
             break;
           }
@@ -80,7 +84,7 @@ class MemeProvider with ChangeNotifier {
           headers: {"Authorization": "Bearer $header"});
       if (response.statusCode == 200) {
         for (int i = 0; i < memes.length; i++) {
-          if (memes[i]['_id'] == memeId) {
+          if (memes[i].id == memeId) {
             print(' MEME ID IS ${memes[i]}');
             memes.removeAt(i);
             notifyListeners();
@@ -105,44 +109,13 @@ class MemeProvider with ChangeNotifier {
         body: jsonEncode({"caption": myCaption}));
     if (response.statusCode == 200) {
       for (int i = 0; i < memes.length; i++) {
-        if (memes[i]['_id'] == memeId) {
-          memes[i]['caption'] = jsonDecode(response.body)['meme']['caption'];
+        if (memes[i].id == memeId) {
+          memes[i].caption = jsonDecode(response.body)['meme']['caption'];
           notifyListeners();
         }
       }
     } else {
       print("ERROR ON OTHER THAN 200");
-    }
-  }
-
-  Future<void> PostedMemesByUser(String userID) async {
-    var response = await http.get(Uri.parse("$myIP/memes/by/$userID"),
-        headers: {'Authorization': 'Bearer $header'});
-    if (response.statusCode == 200) {
-      personMemes = (jsonDecode(response.body) as List<dynamic>)
-          .map((e) => e as Map<String, dynamic>)
-          .toList();
-
-      notifyListeners();
-    } else {
-      throw Exception("INVALID RESPONSE");
-    }
-  }
-
-  Future<void> LikeMemesByUser(String userID) async {
-    var response = await http.get(Uri.parse("$myIP/memes/liked/$userID"),
-        headers: {'Authorization': 'Bearer $header'});
-    if (response.statusCode == 200) {
-      // for (int i = 0; i < memes.length; i++) {
-      // if (userID == memes[i]['uploadedBy']['id']) {
-      likesMeme = (jsonDecode(response.body) as List<dynamic>)
-          .map((e) => e as Map<String, dynamic>)
-          .toList();
-      notifyListeners();
-      // }
-      // }
-    } else {
-      throw Exception("INVALID RESPONSE");
     }
   }
 }

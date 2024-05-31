@@ -5,10 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:memeapp/Providers/MemeProvider.dart';
 import 'package:memeapp/Resources/Resources.dart';
+import 'package:memeapp/modalclass/user_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Authprovider with ChangeNotifier {
-  Map<String, dynamic> user = {};
+  User? user;
   static String header = '';
 
   Authprovider() {
@@ -22,7 +23,7 @@ class Authprovider with ChangeNotifier {
     // notifyListeners();
   }
 
-  Future<Map<String, dynamic>?> getUserFromSavedToken() async {
+  Future<User?> getUserFromSavedToken() async {
     var prefs = await SharedPreferences.getInstance();
     String? savedToken = await prefs.getString('headers');
     if (savedToken == null) return null;
@@ -33,7 +34,9 @@ class Authprovider with ChangeNotifier {
         headers: {'Authorization': 'Bearer $savedToken'});
     print('Response body from auth: ${response.body}');
     if (response.statusCode == 200) {
-      user = (jsonDecode(response.body) as Map<String, dynamic>);
+      var decodedInfo = jsonDecode(response.body);
+      user = User.parseFromJSON(decodedInfo);
+
       print("THE BODY IS LLLL ${response.body}");
       notifyListeners();
       return user;

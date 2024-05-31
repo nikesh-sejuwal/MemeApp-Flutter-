@@ -145,14 +145,17 @@ class _EditBoxState extends State<EditBox> {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                           content: Text(
-                                              "Successfully changed profile details")));
+                                              "Successfully changed profile details"),
+                                          backgroundColor: Colors.green));
                                   Navigator.of(context).pop();
                                 } else {
                                   throw Exception(responseBody);
                                 }
                               } catch (e) {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(e.toString())));
+                                    SnackBar(
+                                        content: Text(e.toString()),
+                                        backgroundColor: Colors.red));
                               } finally {
                                 isSendingRequest = false;
                               }

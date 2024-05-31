@@ -1,20 +1,18 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:memeapp/Components/Dialogs/Dialog_Box.dart';
 import 'package:provider/provider.dart';
-// import 'package:memeapp/Providers/AuthProvider.dart';
-// import 'package:provider/provider.dart';
-
-// import '../Components/Dialogs/edit_Box.dart';
 import '../Components/Dialogs/edit_Box.dart';
 import '../Components/Dialogs/likes.dart';
 import '../Components/Dialogs/posts.dart';
 import '../Providers/AuthProvider.dart';
 import '../Resources/Resources.dart';
+import '../modalclass/user_model.dart';
 
 class Profile_Page extends StatefulWidget {
-  final Map<String, dynamic> myUsers;
+  final User myUser;
 
-  Profile_Page({super.key, required this.myUsers});
+  Profile_Page({super.key, required this.myUser});
 
   @override
   State<Profile_Page> createState() => _Profile_PageState();
@@ -28,13 +26,14 @@ class _Profile_PageState extends State<Profile_Page> {
   late String email;
   late String phone;
   late String? imageURL;
+
   @override
   void initState() {
-    name = widget.myUsers['uploadedBy']['name'];
-    phone = widget.myUsers['uploadedBy']['phone'];
-    email = widget.myUsers['uploadedBy']['email'];
-    id = widget.myUsers['uploadedBy']['id'];
-    imageURL = widget.myUsers['uploadedBy']['imageURL'];
+    name = widget.myUser.name;
+    phone = widget.myUser.phone;
+    email = widget.myUser.email;
+    id = widget.myUser.id;
+    imageURL = widget.myUser.imageURL;
     super.initState();
   }
 
@@ -97,7 +96,7 @@ class _Profile_PageState extends State<Profile_Page> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            if (id == aProv.user['id'])
+                            if (id == aProv.user!.id)
                               IconButton(
                                   onPressed: () {
                                     Navigator.of(context).push(
@@ -120,9 +119,13 @@ class _Profile_PageState extends State<Profile_Page> {
                                     borderRadius: BorderRadius.circular(100),
                                   ),
                                   child: ClipOval(
-                                    child: Image.network(
-                                      imageURL ?? personImg,
+                                    child: CachedNetworkImage(
+                                      imageUrl: imageURL ?? personImg,
                                       fit: BoxFit.cover,
+                                      placeholder: (context, url) =>
+                                          CircularProgressIndicator(),
+                                      errorWidget: (context, url, error) =>
+                                          Icon(Icons.error),
                                     ),
                                   ),
                                 ),
